@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ges.check.dao.GenreDao">
+
+    <select id="selectGenre" parameterType="map" resultType="map">
+        select 
+            no as idx
+            ,genre  as genre
+        from 
+            tbl_genre
+    </select>
+
+
+</mapper>

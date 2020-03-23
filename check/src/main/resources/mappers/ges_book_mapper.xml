@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ges.check.dao.BookDao" >
+   
+    <insert id="insertBook">
+        insert  IGNORE into tbl_book
+            (
+                bookname
+                ,authors
+                ,publisher
+                ,publication_year
+                ,isbn13
+                ,genre
+                ,addition_symbol
+                ,vol
+                ,class_no
+            ) 
+        value 
+         <!-- (
+            #{bookname}
+            ,#{authors}
+            ,#{publisher}
+            ,#{publication_year}
+            ,#{isbn13}
+            ,#{addition_symbol}
+            ,#{vol}
+            ,#{class_no}
+            ,#{item.genre}
+        ) -->
+        <foreach collection="bookListitem" item="item" separator="," index="no"  >
+            (
+                #{item.bookname}
+                ,#{item.authors}
+                ,#{item.publisher}
+                ,#{item.publication_year}   
+                ,#{item.isbn13}
+                ,#{item.genre}
+                ,#{imte.addition_symbol}
+                ,#{item.vol}
+                ,#{item.class_no}
+                
+            )
+        </foreach>
+            
+    </insert>
+    <insert id="insertRank" parameterType="map">
+        insert into tbl_rank
+            (
+                book_no
+                ,rank  
+                ,genre_code
+            )
+            value
+            <!-- (
+                #{book_no}
+                ,#{rank}
+                ,#{genre_code}
+            ) -->
+            <foreach collection="bookListitem" item="item" separator="," index="no"  >
+                (
+                    #{item.no}
+                    ,#{item.ranking}
+                    ,#{item.genre}
+                )
+            </foreach>
+    </insert>
+
+    <select id="selectBook" parameterType="map" resultType="map">
+        select 
+             no as no
+            ,bookname as bookName
+            ,authors as authors
+            ,vol as vol
+            ,class_no as classNO
+            ,isbn13 as Isbn13
+            ,genre as genre
+            ,DATE_FORMAT(reg_date, '%Y-%m-%d %T') as regdate
+            ,DATE_FORMAT(update_date, '%Y-%m-%d %T') as updatedate
+        from
+            tbl_book
+        ORDER BY no
+    </select>
+
+    <select id="selectBookIsbn13" parameterType="map" resultType="map">
+        select 
+            no as no
+            ,bookname as bookName
+            ,authors as authors
+            ,vol as vol
+            ,class_no as classNO
+            ,isbn13 as Isbn13
+            ,genre as genre
+            ,DATE_FORMAT(reg_date, '%Y-%m-%d %T') as regdate
+            ,DATE_FORMAT(update_date, '%Y-%m-%d %T') as updatedate
+        from
+            tbl_book
+            where isbn13 = #{isbn13}
+        ORDER BY no
+    </select>
+
+    <update id="updateBook" parameterType="map" >
+        update tbl_book set
+            bookname = #{bookname}
+        where 
+            isbn13 = #{isbn13}
+
+    </update>
+    <delete id="deleteBook" parameterType="map">
+        delete
+        from tbl_book where isbn13 = #{isbn13}
+    </delete>
+
+    <delete id="deleteRank" parameterType="map">
+        delete 
+        from tbl_rank
+    </delete>
+</mapper>
