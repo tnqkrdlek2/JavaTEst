@@ -1,0 +1,33 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+      location: C:/Temp
+                
+  datasource:
+#   driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&serverTimezone=UTC&allowMultiQueries=true
+    username: root
+    password: ges0621
+# hikari 사용 하는 이유. 확인하기
+    hikari:
+      connection-timeout: 5000
+      validation-timeout: 1000
+      maximum-pool-size: 30
+      minimum-idle: 2
+      connection-test-query: SELECT 1
+
+  mvc:
+    static-path-pattern: /resource/**
+   
+    
+mybatis:
+  configuration:
+    cache-enabled: true
+    use-generated-keys: true
+    default-executor-type: reuse
+    default-statement-timeout: 3000
+    
+   

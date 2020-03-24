@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property name="LOGS_ABSOLUTE_PATH" value="./logs" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyyMMdd HH:mm:ss.SSS} [%thread] %-3level %logger{5} - %msg %n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+        <level>error</level>
+        <onMatch>ACCEPT</onMatch>
+        <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>${LOGS_ABSOLUTE_PATH}/error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>Log/error-%d{yyyy-MM-dd}.%i.txt</fileNamePattern>
+        <maxFileSize>100MB</maxFileSize>
+        <maxHistory>60</maxHistory>
+        <totalSizeCap>10GB</totalSizeCap>
+    </rollingPolicy>
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}[%-5level] : %msg%n</pattern>
+    </encoder>
+</appender>
+
+
+
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS_ABSOLUTE_PATH}/logback.log</file>
+      <encoder>
+          <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
+      </encoder>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <fileNamePattern>${LOGS_ABSOLUTE_PATH}/logback.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+          <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+              <!-- or whenever the file size reaches 100MB -->
+              <maxFileSize>5MB</maxFileSize>
+              <!-- kb, mb, gb -->
+          </timeBasedFileNamingAndTriggeringPolicy>
+          <maxHistory>30</maxHistory>
+      </rollingPolicy>
+  </appender>
+
+
+  
+  <logger name="jdbc" level="OFF"/>
+  
+  <logger name="jdbc.sqlonly" level="OFF"/>
+  <logger name="jdbc.sqltiming" level="DEBUG"/>
+  <logger name="jdbc.audit" level="OFF"/>
+  <logger name="jdbc.resultset" level="OFF"/>
+  <logger name="jdbc.resultsettable" level="OFF"/>
+  <logger name="jdbc.connection" level="OFF"/>
+  <logger name="jdbc.connection" level="OFF"/>
+  <logger name="org.springframework.web" level="DEBUG" />
+  <logger name="com.green.cms.controller" level="DEBUG" />
+  
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="ROLLING" />
+    <appender-ref ref="ERROR" />
+  </root>
+  
+</configuration>

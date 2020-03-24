@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ges.check.dao.CheckDao" >
+    <select id="selectList" parameterType="map" resultType="map">
+        select 
+            board_idx as bidx
+            ,subject as subject
+            ,content as content
+            ,DATE_FORMAT(reg_date, '%Y-%m-%d %T') as regdate
+            ,DATE_FORMAT(update_date, '%Y-%m-%d %T') as updatedate
+        from
+            tbl_ges_board
+        ORDER BY board_idx
+    </select>
+
+    <!--keyProperty 자동 생성된 키값 useGeneratedKeys 기본 false  -->
+    <!-- -->
+    <insert id="insertBoard" useGeneratedKeys="true" keyProperty="board_idx">
+        insert into tbl_ges_board
+            (
+                subject
+                ,content
+            ) 
+        value 
+            (
+                #{subject}
+                ,#{content}
+            )
+       
+    </insert>
+    <update id="updateBoard"  parameterType="map" >
+        update tbl_ges_board set
+            subject = #{subject}
+            ,content = #{content}
+        where 
+		board_idx = #{board_idx}
+    </update>
+
+    <delete id="deleteBoard" >
+        delete 
+        from 
+            tbl_ges_board 
+        where board_idx = #{board_idx}
+    </delete>
+
+
+</mapper>
