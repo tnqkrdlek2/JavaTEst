@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 
+import org.apache.ibatis.javassist.expr.NewArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,8 @@ public class BatchServiceImpl implements BatchService {
     @Autowired
     private NaruService mNaruService;
 
-    @Autowired
-    private BookDao mBookDao;
 
-    final int PageSize = 5;
+    final int PageSize = 2;
     Gson gson = new Gson();
 
     @Transactional(rollbackFor = Exception.class)
@@ -42,15 +41,12 @@ public class BatchServiceImpl implements BatchService {
         return resultMap;
     }
 
-
-      // json 으로 List 가지고 오기
-      private Map<String,Object> BookList() throws Exception {
+    private Map<String,Object> BookList(){
         RestTemplate restTemplate = new RestTemplate();
         List<Map<String,Object>> genreIndex = mGenreDao.selectGenre(null);
 
         Map<String,Object> genreMap = Maps.newHashMap();
-       
-        genreIndex.forEach(genre ->{
+        genreIndex.forEach(genre -> {
 
            String url = mNaruService.loanItemSrch(genre.get("idx").toString(), PageSize);
            //System.out.println(url);
@@ -61,46 +57,35 @@ public class BatchServiceImpl implements BatchService {
 
            @SuppressWarnings("all")
            Map<String,Object> responseMap = (Map) result.get("response");
-
+           
            @SuppressWarnings("all")
            List<Map<String,Object>> bookList = (List) responseMap.get("docs");
-           
-           List<Map<String, Object>> bookListitem = Lists.newArrayList();
-            
-           for (int i = 0; i < bookList.size(); i++) {
-               //System.out.println("tt");
-               Map<String, Object> doc = bookList.get(i);
-               @SuppressWarnings("all") // Map doc 가지고 온것 for 문으로 돌리기
-               Map<String, Object> book = (Map) doc.get("doc");
-               bookListitem.add(book);
+
+           List<Map<String,Object>> bookItem = Lists.newArrayList();
+           for(int i =0; i < bookList.size(); i++){
+               Map<String,Object> doc = bookList.get(i);
+               @SuppressWarnings("all")
+               Map<String,Object> book = (Map) doc.get("doc");
+
+               bookItem.add(book);
            }
-            Map<String,Object> insertBookMap = Maps.newHashMap();
-            insertBookMap.put("bookListitem", bookListitem);
-            //genreMap.put("idx",genre.get("idx").toString());
-            //genreMap.put("bookListitem", bookListitem);
-          
-            if(bookList.size() == 20){
-                mBookDao.insertRank(insertBookMap);
-                
-            }
-            mBookDao.insertBook(insertBookMap);
+           System.out.println("bookItem =======:"+  bookItem);
+           
         });
-        
-       
-        return genreMap;
+
+        return genreMap; 
     }
+  
 
-    // private void BatchProcess(String recommendType, Map<String,Object> BookResult ) throws Exception{
 
-    //     for(String key : BookResult.keySet()){
-    //         @SuppressWarnings("all")
-    //         List<Map<String,Object>> BookList = (List) BookResult.get(key);
-    //         System.out.println("BatchProcess BookList >>>>>"+ BookList);
+    private void CmsBatchProcess(String recommedType, Map<String,Object> BookResutl){
 
-            
-    //     }
-    // }
+        for(String key : BookResutl.keySet()){
+            @SuppressWarnings("all")            
+            List<Map<String,Object>> BookResultList = (List) BookResutl.get(key);
+            List<Map<String,Object>> cmsBookList = Lists.newArrayList();
+        }
 
-    
+    }
 
 }

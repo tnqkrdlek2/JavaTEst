@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import com.ges.check.dao.BookDao;
 import com.ges.check.dao.GenreDao;
+import com.ges.check.service.BatchService;
 //import com.ges.check.service.BatchService;
 import com.ges.check.service.BookService;
 import com.ges.check.service.NaruService;
@@ -33,20 +34,20 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BookDao mBookDao;
 
-    // @Autowired
-    // private BatchService mBatchService;
+    @Autowired
+    private BatchService mBatchService;
 
     Gson gson = new Gson();
 
-    final int PageSize = 5;
+    final int PageSize = 2;
 
     @Override
     public Map<String, Object> insertBook(Map<String, Object> param) throws Exception {
         System.out.println("1111111111111 serviceInpl insertbOok");
-        // Map<String,Object> book = mBatchService.executeBatch(param);
-        Map<String, Object> book = BookList();
+        Map<String,Object> book = mBatchService.executeBatch(param);
+        //Map<String, Object> book = BookList();
         try {
-            mBookDao.insertBook(book);
+            mBookDao.insertBook(param);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,35 +56,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Map<String, Object> insertRank(Map<String, Object> param) throws Exception {
-
-        @SuppressWarnings("all")
-        Map<String, Object> book = BookList();// 정보나루 값 가지고 오기
-        List<Map<String, Object>> bookselect = mBookDao.selectGenre(param);// DB Genre 정보 
-        List<Map<String,Object>> bookList = mBookDao.selectBook(param); // DB Book 정보
-        param.put("reuslt",bookList);
-        //String isbn13 = param.get("isbn13").toString();
-
-        for(int i =0; i< param.size(); i ++) {
-            @SuppressWarnings("all")
-            Map<String,Object> list = bookselect.get(i);
-
-            System.out.println("bookList ===> : "+ book.get("isbn13").toString());
-            System.out.println("List ===== >>> :"+list.get("isbn13").toString());
-
-        }
-        
-        // for(String key : book.keySet()){
-        //     @SuppressWarnings("all")
-        //     List<Map<String,Object>> list =  (List)book.get(key);
-        //     System.out.println("test 정보나루 도서 리스트 :" + list);
-        //     System.out.println("==================================");
-            
-        //     for(int i =0; i< list.size(); i++){
-        //         Map<String,Object> listMap = list.get(i);
-        
-
-        //     }
-        // }
+        mBatchService.executeBatch(param);
         return param;
     }
 
@@ -138,8 +111,8 @@ public class BookServiceImpl implements BookService {
                 }
 
                 genreMap.put("bookListitem", bookListitem);
-                //mBookDao.insertRank(genreMap);
-                mBookDao.insertBook(genreMap);
+                // mBookDao.insertRank(genreMap);
+                // mBookDao.insertBook(genreMap);
 
             });
         } catch (Exception e) {

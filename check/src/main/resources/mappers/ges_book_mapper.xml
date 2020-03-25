@@ -17,18 +17,18 @@
                 ,class_no
             ) 
         value 
-         <!-- (
+         (
             #{bookname}
             ,#{authors}
             ,#{publisher}
             ,#{publication_year}
             ,#{isbn13}
+            ,#{genre}
             ,#{addition_symbol}
             ,#{vol}
             ,#{class_no}
-            ,#{item.genre}
-        ) -->
-        <foreach collection="bookListitem" item="item" separator="," index="no"  >
+        )
+        <!-- <foreach collection="bookListitem" item="item" separator="," index="no"  >
             (
                 #{item.bookname}
                 ,#{item.authors}
@@ -41,7 +41,7 @@
                 ,#{item.class_no}
                 
             )
-        </foreach>
+        </foreach> -->
             
     </insert>
     <insert id="insertRank" parameterType="map">

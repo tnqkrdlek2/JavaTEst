@@ -139,6 +139,17 @@ public class TestController {
         return new ResponseEntity<>(e.getLocalizedMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+    @PostMapping(value = "/test/bookRankInsert")
+    public ResponseEntity<?> bookRankInsert(@RequestParam Map<String,Object> param) throws Exception{
+        System.out.println("0000000000000000000000 book Rank Insert Controller");
+
+        try {
+            return new ResponseEntity<>(mBookService.insertRank(param),HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @PostMapping(value = "/test/bookInsert")
     public ResponseEntity<?> bookInsert(@RequestParam Map<String, Object> param) throws Exception{
