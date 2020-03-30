@@ -44,7 +44,7 @@
         </foreach>
             
     </insert>
-    <insert id="insertRank" >
+    <insert id="insertRank" parameterType="map" >
         insert into tbl_rank
             (
                 book_no

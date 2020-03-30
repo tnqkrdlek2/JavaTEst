@@ -124,7 +124,6 @@ public class TestController {
 
     @GetMapping(value = "/test/bookSelect")
     public ResponseEntity<?> bookJson(@RequestParam  Map<String, Object> param) {
-
         try {
             return new ResponseEntity<>(mBookService.selectBookList(param), HttpStatus.OK);
         } catch (final Exception e) {
