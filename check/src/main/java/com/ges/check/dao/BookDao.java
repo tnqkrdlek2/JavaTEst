@@ -14,4 +14,5 @@ public interface BookDao{
     int insertRank(Map<String,Object> param);
     int deleteRank(Map<String,Object> param);
     List<Map<String,Object>> selectGenre(Map<String,Object> param);
+    List<Map<String,Object>> selectJson(Map<String,Object> param);
 }

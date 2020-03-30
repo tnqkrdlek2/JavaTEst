@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ges.check.service.BatchService;
 import com.ges.check.service.BookService;
 import com.ges.check.service.CheckService;
 import com.ges.check.service.NaruService;
@@ -39,18 +40,20 @@ public class TestController {
     private CheckService mCheckService;
 
     @Autowired
+    private BatchService mBatchService;
+    @Autowired
     private BookService mBookService;
 
     @RequestMapping("/test")
     public String test() {
 
-        List<String> list = new ArrayList<>();
-		list.add("a");
-		list.add("p");
-		list.add("p");
-		list.add("l");
+        final List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("p");
+        list.add("p");
+        list.add("l");
         list.add("e");
-        
+
         list.forEach(x -> {
             System.out.println(x);
         });
@@ -58,27 +61,27 @@ public class TestController {
     }
 
     @RequestMapping(value = "/hello/{name}")
-    String hello(@PathVariable String name) {
+    String hello(@PathVariable  String name) {
         return String.format("Hello %s", name);
     }
 
     @GetMapping(value = "/test/list")
-    public ResponseEntity<?> allList(@RequestParam Map<String, Object> param) throws Exception {
+    public ResponseEntity<?> allList(@RequestParam  Map<String, Object> param) throws Exception {
         try {
             return new ResponseEntity<>(mCheckService.selectList(param), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @PostMapping(value = "/test/insert")
-    public ResponseEntity<?> insert(@RequestBody Map<String, Object> param) throws Exception {
+    public ResponseEntity<?> insert(@RequestBody  Map<String, Object> param) throws Exception {
 
         System.out.println(param);
         try {
             return new ResponseEntity<>(mCheckService.insertBoard(param), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -87,86 +90,95 @@ public class TestController {
     }
 
     @PutMapping(value = "/test/update")
-    public ResponseEntity<?> update(Map<String, Object> param) {
+    public ResponseEntity<?> update( Map<String, Object> param) {
         try {
             return new ResponseEntity<>(mCheckService.updateBoard(param), HttpStatus.OK);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping(value = "/test/delete")
-    public ResponseEntity<?> delete(Map<String, Object> param) {
+    public ResponseEntity<?> delete( Map<String, Object> param) {
         try {
             return new ResponseEntity<>(mCheckService.deleteBoard(param), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
     @PutMapping(value = "/test/bookUpdate")
-    public ResponseEntity<?> bookUpdate(@RequestParam Map<String,Object> param) throws Exception {
-        System.out.println("book UPdaTE : >>>> "+ param);
+    public ResponseEntity<?> bookUpdate(@RequestParam  Map<String, Object> param) throws Exception {
+        System.out.println("book UPdaTE : >>>> " + param);
 
         try {
-            return new ResponseEntity<>(mBookService.updateBook(param),HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getLocalizedMessage() , HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(mBookService.updateBook(param), HttpStatus.OK);
+        } catch (final Exception e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "/test/bookSelect")
-    public ResponseEntity<?> bookJson(@RequestParam Map<String, Object> param)  {
+    public ResponseEntity<?> bookJson(@RequestParam  Map<String, Object> param) {
 
         try {
             return new ResponseEntity<>(mBookService.selectBookList(param), HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @GetMapping(value="/test/bookIsbn")
-    public ResponseEntity<?> bookIsbn(@RequestParam Map<String, Object> param) throws Exception {
+    @GetMapping(value = "/test/bookIsbn")
+    public ResponseEntity<?> bookIsbn(@RequestParam  Map<String, Object> param) throws Exception {
         System.err.println("bookIsbn");
-    try {
-        return new ResponseEntity<>(mBookService.selectBookIsbn13(param),HttpStatus.OK);
-    } catch (Exception e) {
-        //e.printStackTrace();
-        return new ResponseEntity<>(e.getLocalizedMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-}
-    @PostMapping(value = "/test/bookRankInsert")
-    public ResponseEntity<?> bookRankInsert(@RequestParam Map<String,Object> param) throws Exception{
-        System.out.println("0000000000000000000000 book Rank Insert Controller");
-
         try {
-            return new ResponseEntity<>(mBookService.insertRank(param),HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return new ResponseEntity<>(mBookService.selectBookIsbn13(param), HttpStatus.OK);
+        } catch (final Exception e) {
+            // e.printStackTrace();
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
+    }
+
+    @PostMapping(value = "/test/bookRankInsert")
+    public ResponseEntity<?> bookRankInsert(@RequestParam  Map<String, Object> param) throws Exception {
+        System.out.println("0000000000000000000000 book Rank Insert Controller");
+        try {
+            return new ResponseEntity<>(mBookService.insertRank(param), HttpStatus.OK);
+            // return new ResponseEntity<>(mBatchService.executeBatch(param),HttpStatus.OK);
+        } catch (final Exception e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(value = "/test/bookInsert")
-    public ResponseEntity<?> bookInsert(@RequestParam Map<String, Object> param) throws Exception{
+    public ResponseEntity<?> bookInsert(@RequestParam  Map<String, Object> param) throws Exception {
         System.out.println("00000000000000 book insert controller");
         try {
             Map<String, Object> resultMap = Maps.newHashMap();
             resultMap.put("book", mBookService.insertBook(param));
             return new ResponseEntity<>(resultMap, HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             //e.printStackTrace();
            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         //return null;
     }
 
-  
-    
+    @GetMapping(value = "/test/bookJson")
+    public ResponseEntity<?> MysqlJson(@RequestParam Map<String,Object> param) throws Exception{
+
+        try {
+            return new ResponseEntity<>(mBookService.selectJson(param), HttpStatus.OK);    
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+    }
         
 }
         

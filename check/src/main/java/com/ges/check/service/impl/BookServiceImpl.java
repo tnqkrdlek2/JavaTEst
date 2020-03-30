@@ -44,14 +44,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public Map<String, Object> insertBook(Map<String, Object> param) throws Exception {
         System.out.println("1111111111111 serviceInpl insertbOok");
-        Map<String,Object> book = mBatchService.executeBatch(param);
-        //Map<String, Object> book = BookList();
         try {
-            mBookDao.insertBook(param);
+            mBatchService.executeBatch(param);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return book;
+        return param;
     }
 
     @Override
@@ -62,15 +60,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Map<String, Object> selectBookIsbn13(Map<String, Object> param) throws Exception {
-        // System.out.println("isbn13 :"+ param);
         return mBookDao.selectBookIsbn13(param);
     }
 
     @Override
     public List<Map<String, Object>> selectBookList(Map<String, Object> param) throws Exception {
-
         List<Map<String, Object>> list = mBookDao.selectBook(param);
-        // System.out.println("select Book List : >> "+list);
         return list;
     }
 
@@ -79,13 +74,23 @@ public class BookServiceImpl implements BookService {
         return mBookDao.updateBook(param);
     }
 
+    @Override
+    public Map<String, Object> searchIsbn(Map<String, Object> param) throws Exception {
+        return null;
+    }
+
+    @Override
+    public List<Map<String,Object>> selectJson(Map<String,Object> param) throws Exception{
+        return mBookDao.selectJson(param);
+    }
+
     // json 으로 List 가지고 오기
     public Map<String, Object> BookList() throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> genreMap = Maps.newHashMap();
 
         List<Map<String, Object>> genreList = mGenreDao.selectGenre(null);
-        try {
+       
             genreList.forEach(genre -> {
                 // String address = mNaruService.loanItemSrch(genre.get("idx").toString(),
                 // PageSize);
@@ -105,22 +110,52 @@ public class BookServiceImpl implements BookService {
                     Map<String, Object> doc = bookList.get(i);
                     @SuppressWarnings("all") // Map doc 가지고 온것 for 문으로 돌리기
                     Map<String, Object> book = (Map) doc.get("doc");
-                    
                     book.put("genre", genre.get("idx").toString());
                     bookListitem.add(book);
                 }
 
                 genreMap.put("bookListitem", bookListitem);
                 // mBookDao.insertRank(genreMap);
-                // mBookDao.insertBook(genreMap);
+                mBookDao.insertBook(genreMap);
 
             });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     CmsBatchProcess("bookListitem",genreMap);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
         return genreMap;
     }
+    private void CmsBatchProcess(String recommendType, Map<String,Object> BookResult){
+        
+        // rank 작업  
+            System.out.println("recommedType ==== : " + recommendType);
+            if(recommendType.equals("bookItem")) {
+                for(String key : BookResult.keySet()){
+                    @SuppressWarnings("all")            
+                    List<Map<String,Object>> BookResultList = (List) BookResult.get(key);
+                    System.out.println("key " + key + "value" + BookResult.values());
+                    List<Map<String,Object>> cmsBookList = Lists.newArrayList();
 
+                    for(int i = 0; i< BookResultList.size(); i++) {
+                        
+                        Map<String,Object> bookMap = BookResultList.get(i);
+                        Map<String,Object> insertMap = Maps.newHashMap();
+
+                        insertMap.put("book_no", bookMap.get("no"));
+                        insertMap.put("rank",i+1);
+                        insertMap.put("genre", key);
+                        cmsBookList.add(insertMap);
+                    }
+                    Map<String,Object> insertParamMap = Maps.newHashMap();
+                    System.out.println("cms Book List :"+ cmsBookList);
+                    insertParamMap.put("cmsBookList", cmsBookList);
+                    mBookDao.insertRank(insertParamMap);
+                }
+        }
+    }
+
+   
 
     
 

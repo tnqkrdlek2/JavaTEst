@@ -3,7 +3,7 @@
 
 <mapper namespace="com.ges.check.dao.BookDao" >
    
-    <insert id="insertBook">
+    <insert id="insertBook" parameterType="map">
         insert  IGNORE into tbl_book
             (
                 bookname
@@ -17,7 +17,7 @@
                 ,class_no
             ) 
         value 
-         (
+         <!-- (
             #{bookname}
             ,#{authors}
             ,#{publisher}
@@ -27,8 +27,8 @@
             ,#{addition_symbol}
             ,#{vol}
             ,#{class_no}
-        )
-        <!-- <foreach collection="bookListitem" item="item" separator="," index="no"  >
+        ) -->
+        <foreach collection="bookItem" item="item" separator="," index="no"  >
             (
                 #{item.bookname}
                 ,#{item.authors}
@@ -41,10 +41,10 @@
                 ,#{item.class_no}
                 
             )
-        </foreach> -->
+        </foreach>
             
     </insert>
-    <insert id="insertRank" parameterType="map">
+    <insert id="insertRank" >
         insert into tbl_rank
             (
                 book_no
@@ -57,14 +57,17 @@
                 ,#{rank}
                 ,#{genre_code}
             ) -->
-            <foreach collection="bookListitem" item="item" separator="," index="no"  >
+            <foreach collection="cmsBookList" item="item" separator="," index="idx"  >
                 (
-                    #{item.no}
-                    ,#{item.ranking}
+                    #{item.book_no}
+                    ,#{item.rank}
                     ,#{item.genre}
                 )
             </foreach>
     </insert>
+    <select id="selectJson" parameterType="map" resultType="map">
+        select * from tbl_json
+    </select>
 
     <select id="selectBook" parameterType="map" resultType="map">
         select 
@@ -120,8 +123,4 @@
         from tbl_book where isbn13 = #{isbn13}
     </delete>
 
-    <delete id="deleteRank" parameterType="map">
-        delete 
-        from tbl_rank
-    </delete>
 </mapper>

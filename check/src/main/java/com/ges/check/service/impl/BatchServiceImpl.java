@@ -25,12 +25,14 @@ public class BatchServiceImpl implements BatchService {
 
     @Autowired
     private GenreDao mGenreDao;
-    
+    @Autowired
+    private BookDao mBookDao;
+
     @Autowired
     private NaruService mNaruService;
 
 
-    final int PageSize = 2;
+    final int PageSize = 10;
     Gson gson = new Gson();
 
     @Transactional(rollbackFor = Exception.class)
@@ -45,6 +47,7 @@ public class BatchServiceImpl implements BatchService {
         RestTemplate restTemplate = new RestTemplate();
         List<Map<String,Object>> genreIndex = mGenreDao.selectGenre(null);
 
+        //정보나루 정보 가지고오기 (가지고 오기 / insert / isbn13 비교 따로 만들기 )
         Map<String,Object> genreMap = Maps.newHashMap();
         genreIndex.forEach(genre -> {
 
@@ -60,32 +63,57 @@ public class BatchServiceImpl implements BatchService {
            
            @SuppressWarnings("all")
            List<Map<String,Object>> bookList = (List) responseMap.get("docs");
-
+        
            List<Map<String,Object>> bookItem = Lists.newArrayList();
            for(int i =0; i < bookList.size(); i++){
                Map<String,Object> doc = bookList.get(i);
                @SuppressWarnings("all")
                Map<String,Object> book = (Map) doc.get("doc");
-
+               book.put("genre",genre.get("idx").toString());
                bookItem.add(book);
            }
-           System.out.println("bookItem =======:"+  bookItem);
-           
+           genreMap.put("bookItem", bookItem);
+           mBookDao.insertBook(genreMap);
         });
 
+        // 정보나루 값 가지고오기 end
+
+        //DB 정보 비교 해서 rank 변경 
+        // try {    
+        //     CmsBatchProcess("genre",genreMap);
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
         return genreMap; 
     }
-  
 
+   // private void CmsBatchProcess(String recommendType, Map<String,Object> BookResult){
+        
+        // rank 작업  
+            // System.out.println("recommedType ==== : " + recommendType);
+            // if(recommendType.equals("bookItem")) {
+        //         for(String key : BookResult.keySet()){
+        //             @SuppressWarnings("all")            
+        //             List<Map<String,Object>> BookResultList = (List) BookResult.get(key);
+        //             System.out.println("key " + key + "value" + BookResult.values());
+        //             List<Map<String,Object>> cmsBookList = Lists.newArrayList();
 
-    private void CmsBatchProcess(String recommedType, Map<String,Object> BookResutl){
+        //             for(int i = 0; i< BookResultList.size(); i++) {
+                        
+        //                 Map<String,Object> bookMap = BookResultList.get(i);
+        //                 Map<String,Object> insertMap = Maps.newHashMap();
 
-        for(String key : BookResutl.keySet()){
-            @SuppressWarnings("all")            
-            List<Map<String,Object>> BookResultList = (List) BookResutl.get(key);
-            List<Map<String,Object>> cmsBookList = Lists.newArrayList();
-        }
-
-    }
-
+        //                 insertMap.put("book_no", bookMap.get("no"));
+        //                 insertMap.put("rank",i+1);
+        //                 insertMap.put("genre", key);
+        //                 cmsBookList.add(insertMap);
+        //             }
+        //             Map<String,Object> insertParamMap = Maps.newHashMap();
+        //             System.out.println("cms Book List :"+ cmsBookList);
+        //             insertParamMap.put("cmsBookList", cmsBookList);
+        //             mBookDao.insertRank(insertParamMap);
+        //         }
+        // }
+    //}
+    
 }
