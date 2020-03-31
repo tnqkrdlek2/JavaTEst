@@ -42,7 +42,6 @@
                 
             )
         </foreach>
-            
     </insert>
     <insert id="insertRank" parameterType="map" >
         insert into tbl_rank
@@ -118,9 +117,16 @@
             isbn13 = #{isbn13}
 
     </update>
+    
     <delete id="deleteBook" parameterType="map">
         delete
         from tbl_book where isbn13 = #{isbn13}
+    </delete>
+
+    <delete id="deleteRank" parameterType="map">
+        delete
+        from tbl_rank
+        where genre_code = #{genre}
     </delete>
 
 </mapper>

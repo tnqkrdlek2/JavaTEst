@@ -38,8 +38,6 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BatchService mBatchService;
 
-    @Autowired
-    private BatchService2 mBatchService2;
 
     Gson gson = new Gson();
 
@@ -80,28 +78,33 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Map<String, Object> searchIsbn(Map<String, Object> param) throws Exception {
+        String isbn = param.get("isbn13").toString();
+        param.put("isbn13", isbn);
+
+        
         List<Map<String,Object>> bookList = mBookDao.selectBook(param);
 
-        Map<String,Object> book = null;
-        if(bookList.size() == 0){
-            //System.out.println("==========================  insert -> searchIsbn  ==============================");
-            mBookDao.insertBook(book);
-        } else {
-            //System.out.println("================== searchIsbn else ========================");
-            try {
-                book = bookList.get(0);
-                //System.out.println("==================== book searchIsbn    ================ :"+ book);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        //System.out.println("bookList test =================== :"+bookList);
 
-        return null;
+        Map<String,Object> book = null;
+        
+            if(bookList.size() == 0){
+                mBookDao.insertBook(book);
+                
+            } else {
+                try {
+                    book = bookList.get(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        return book;
     }
 
     @Override
     public List<Map<String,Object>> selectJson(Map<String,Object> param) throws Exception{
-        return mBookDao.selectJson(param);
+        return null;
     }
 
     // json 으로 List 가지고 오기

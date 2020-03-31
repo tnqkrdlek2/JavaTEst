@@ -74,8 +74,8 @@ public class BatchServiceImpl implements BatchService {
                 book.put("genre", genre.get("idx").toString());
                 bookItem.add(book);
             }
-            genreMap.put("bookItem", bookItem);
-            //mBookDao.insertBook(genreMap);
+             genreMap.put("bookItem", bookItem);
+             mBookDao.insertBook(genreMap);
         });
 
         // 정보나루 값 가지고오기 end
@@ -90,81 +90,47 @@ public class BatchServiceImpl implements BatchService {
     }
 
     private void CmsBatchProcess(String recommedType, Map<String, Object> BookResult) throws Exception {
-    
-        for(String key: BookResult.keySet()){
+        for(String key : BookResult.keySet()){
             @SuppressWarnings("all")
-            List<Map<String,Object>> BookResultList = (List) BookResult.get(key);
-            
-            BookResultList.forEach(ResultList ->{
-                ResultList.put("isbn13", ResultList.get("isbn13"));
-                System.out.println("ResultListIsbn13 =============== :" + ResultList.get("isbn13"));
-                System.out.println("ResultList =============== :" + ResultList);
+            List<Map<String,Object>> BookList = (List) BookResult.get(key);
+            BookList.forEach(book ->{
+                if(book != null){
+                    book.put("isbn13", book.get("isbn13"));
+                    try {
+                        Map<String,Object> selectbook = mBookService.searchIsbn(book);
+                        book.put("book_no",selectbook.get("no"));
+                        book.put("genre", selectbook.get("genre"));
+                        System.out.println("selectbook ================= " + selectbook );
 
-                try {
-                    Map<String,Object> completeBook = mBookService.searchIsbn(ResultList);
+                        Map<String,Object> deleteParamMap = Maps.newHashMap();
+                        deleteParamMap.put("genre", selectbook.get("genre"));
+                        mBookDao.deleteRank(deleteParamMap);
 
-                    ResultList.put("book_no", completeBook.get("no"));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
-        if(recommedType.equals("genre")){
-            for(String key : BookResult.keySet()){
-
-                @SuppressWarnings("all")
-                List<Map<String,Object>> genreBookList = (List) BookResult.get(key);
-                List<Map<String,Object>> cmsBookList = Lists.newArrayList();
-                for(int i =0; i < genreBookList.size(); i++) {
-                    Map<String,Object> genreBook = genreBookList.get(i);
-                    Map<String,Object> insertParamMap = Maps.newHashMap();
-                    insertParamMap.put("book_no", genreBook.get("book_no"));
-                    insertParamMap.put("genre",key);
-                    insertParamMap.put("rank", i+1);
-                    cmsBookList.add(insertParamMap);
-                }
-
-                Map<String,Object> insertParamMap = Maps.newHashMap();
-                insertParamMap.put("cmsBookList",cmsBookList);
-                mBookDao.insertRank(insertParamMap);
-            }
-        }
-
-    }
-        
-
-    // for(String key : BookResult.keySet()){
-    //     @SuppressWarnings("all")
-    //     List<Map<String,Object>> ResultList = (List) BookResult.get(key);
-
-    //     ResultList.forEach(book -> {
             
-    //     });
-    // }
 
-    //     // rank 작업
-    //     if (recommendType.equals("genre")) {
-    //         for (String key : BookResult.keySet()) {
-    //             @SuppressWarnings("all")
-    //             List<Map<String, Object>> BookResultList = (List) BookResult.get(key);
-    //             //System.out.println("key " + key + "value" + BookResult.values());
-    //             List<Map<String, Object>> cmsBookList = Lists.newArrayList();
-                
-    //             for(int i = 0; i< BookResultList.size(); i++) {
-    //                     Map<String,Object> bookMap = BookResultList.get(i);
-    //                     Map<String,Object> insertMap = Maps.newHashMap();
-    //                     insertMap.put("book_no",bookMap.get("book_no"));
-    //                     insertMap.put("rank",i+1);
-    //                     insertMap.put("genre",key);
-    //                     System.out.println("insertMap   ===== :"+ insertMap);
-    //                     cmsBookList.add(insertMap);
-    //                 }
-    //                 Map<String,Object> insertParamMap = Maps.newHashMap();
-    //                 System.out.println("cms Book List :"+ cmsBookList);
-    //                 insertParamMap.put("cmsBookList", cmsBookList);
-    //                 mBookDao.insertRank(insertParamMap);
-    //             }
-    //     }
-    // }
-    
+        for(String key: BookResult.keySet()){
+            @SuppressWarnings("all")
+            List<Map<String,Object>> BookResultList = (List) BookResult.get(key);
+            List<Map<String,Object>> cmsBookList = Lists.newArrayList();
+
+            for(int i = 0; i< BookResultList.size(); i++){
+                Map<String,Object> bookMap = BookResultList.get(i);
+                Map<String,Object> insertMap = Maps.newHashMap();
+                insertMap.put("book_no",bookMap.get("book_no"));
+                insertMap.put("genre",bookMap.get("genre"));
+                insertMap.put("rank", bookMap.get("ranking"));
+                System.out.println("bookMap  ======================= :"+ bookMap);
+                cmsBookList.add(insertMap);
+            }
+            Map<String,Object> insertParamMap = Maps.newHashMap();
+            insertParamMap.put("cmsBookList", cmsBookList);
+            mBookDao.insertRank(insertParamMap);
+        }
+    }
 }
