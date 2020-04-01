@@ -1,5 +1,7 @@
 package com.ges.check.service.impl;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,25 +82,35 @@ public class BookServiceImpl implements BookService {
     public Map<String, Object> searchIsbn(Map<String, Object> param) throws Exception {
         String isbn = param.get("isbn13").toString();
         param.put("isbn13", isbn);
-
-        
         List<Map<String,Object>> bookList = mBookDao.selectBook(param);
 
-        //System.out.println("bookList test =================== :"+bookList);
-
         Map<String,Object> book = null;
+        
+            // if(bookList.size() == 0 ){
+            //     mBookDao.insertBook(book);
+
+            // }else {
+            //     try {
+            //         book = bookList.get(0);
+            //     } catch (Exception e) {
+            //         e.printStackTrace();
+            //     }
+            // }
         
             if(bookList.size() == 0){
                 mBookDao.insertBook(book);
                 
             } else {
                 try {
-                    book = bookList.get(0);
+                    for(int i =0; i< bookList.size(); i++){
+                        book = new HashMap<>();
+                        book = bookList.get(i);
+                        System.out.println("book ================== :" + book);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
         return book;
     }
 

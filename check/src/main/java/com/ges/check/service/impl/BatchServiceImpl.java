@@ -1,7 +1,10 @@
 package com.ges.check.service.impl;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.ges.check.dao.BookDao;
 import com.ges.check.dao.GenreDao;
@@ -71,11 +74,14 @@ public class BatchServiceImpl implements BatchService {
                 Map<String, Object> doc = bookList.get(i);
                 @SuppressWarnings("all")
                 Map<String, Object> book = (Map) doc.get("doc");
+
+                //book = new HashMap<>();
                 book.put("genre", genre.get("idx").toString());
                 bookItem.add(book);
+                System.out.println("genreMap ========== : "+book);
             }
-             genreMap.put("bookItem", bookItem);
-             mBookDao.insertBook(genreMap);
+            genreMap.put("bookItem", bookItem);
+            mBookDao.insertBook(genreMap);
         });
 
         // 정보나루 값 가지고오기 end
@@ -90,9 +96,12 @@ public class BatchServiceImpl implements BatchService {
     }
 
     private void CmsBatchProcess(String recommedType, Map<String, Object> BookResult) throws Exception {
+
         for(String key : BookResult.keySet()){
+            //System.out.println(key);
             @SuppressWarnings("all")
             List<Map<String,Object>> BookList = (List) BookResult.get(key);
+            
             BookList.forEach(book ->{
                 if(book != null){
                     book.put("isbn13", book.get("isbn13"));
@@ -100,7 +109,7 @@ public class BatchServiceImpl implements BatchService {
                         Map<String,Object> selectbook = mBookService.searchIsbn(book);
                         book.put("book_no",selectbook.get("no"));
                         book.put("genre", selectbook.get("genre"));
-                        System.out.println("selectbook ================= " + selectbook );
+                        //System.out.println("selectbook ================= " + selectbook );
 
                         Map<String,Object> deleteParamMap = Maps.newHashMap();
                         deleteParamMap.put("genre", selectbook.get("genre"));
@@ -125,7 +134,6 @@ public class BatchServiceImpl implements BatchService {
                 insertMap.put("book_no",bookMap.get("book_no"));
                 insertMap.put("genre",bookMap.get("genre"));
                 insertMap.put("rank", bookMap.get("ranking"));
-                System.out.println("bookMap  ======================= :"+ bookMap);
                 cmsBookList.add(insertMap);
             }
             Map<String,Object> insertParamMap = Maps.newHashMap();
