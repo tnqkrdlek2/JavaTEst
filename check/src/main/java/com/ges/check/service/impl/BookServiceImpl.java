@@ -53,7 +53,7 @@ public class BookServiceImpl implements BookService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return param;
+         return param;
     }
 
     @Override
@@ -80,27 +80,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Map<String, Object> searchIsbn(Map<String, Object> param) throws Exception {
+        //System.out.println("searchIsbn"+ param);
         String isbn = param.get("isbn13").toString();
         param.put("isbn13", isbn);
         List<Map<String,Object>> bookList = mBookDao.selectBook(param);
 
         Map<String,Object> book = null;
         
-            // if(bookList.size() == 0 ){
-            //     mBookDao.insertBook(book);
-
-            // }else {
-            //     try {
-            //         book = bookList.get(0);
-            //     } catch (Exception e) {
-            //         e.printStackTrace();
-            //     }
-            // }
-        
-            if(bookList.size() == 0){
-                mBookDao.insertBook(book);
-                
-            } else {
                 try {
                     for(int i =0; i< bookList.size(); i++){
                         book = new HashMap<>();
@@ -110,7 +96,6 @@ public class BookServiceImpl implements BookService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
         return book;
     }
 
