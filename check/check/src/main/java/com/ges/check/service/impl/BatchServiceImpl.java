@@ -73,17 +73,18 @@ public class BatchServiceImpl implements BatchService {
                @SuppressWarnings("all") // Map doc 가지고 온것 for 문으로 돌리기
                Map<String, Object> book = (Map) doc.get("doc");
                bookListitem.add(book);
-           }
-            Map<String,Object> insertBookMap = Maps.newHashMap();
-            insertBookMap.put("bookListitem", bookListitem);
+               
+               
+            }
+            genreMap.put("bookItem",bookListitem);
+            System.out.println("=========genreMap=========== \n  "+ genreMap + "\n=========genreMap========");
             //genreMap.put("idx",genre.get("idx").toString());
             //genreMap.put("bookListitem", bookListitem);
-          
-            if(bookList.size() == 20){
-                mBookDao.insertRank(insertBookMap);
-                
-            }
-            mBookDao.insertBook(insertBookMap);
+            // if(bookList.size() == 20){
+            //     mBookDao.insertRank(insertBookMap);
+            // }
+            // mBookDao.insertBook(insertBookMap);
+
         });
         
        

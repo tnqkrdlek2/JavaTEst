@@ -39,7 +39,6 @@
                 ,#{item.addition_symbol}
                 ,#{item.vol}
                 ,#{item.class_no}
-                
             )
         </foreach>
     </insert>

@@ -159,7 +159,7 @@ public class TestController {
         System.out.println("00000000000000 book insert controller");
         try {
             Map<String, Object> resultMap = Maps.newHashMap();
-            resultMap.put("book", mBookService.insertBook(param));
+            resultMap.put("bookItem", mBookService.insertBook(param));
             return new ResponseEntity<>(resultMap, HttpStatus.OK);
         } catch (final Exception e) {
             //e.printStackTrace();

@@ -43,10 +43,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public Map<String, Object> insertBook(Map<String, Object> param) throws Exception {
         System.out.println("1111111111111 serviceInpl insertbOok");
-        // Map<String,Object> book = mBatchService.executeBatch(param);
-        Map<String, Object> book = BookList();
+        Map<String,Object> book = mBatchService.executeBatch(param);
+        //Map<String, Object> book = BookList();
         try {
-            mBookDao.insertBook(book);
+           //mBookDao.insertBook(book);
+           System.out.println("=============== insertBook start ===========");
         } catch (Exception e) {
             e.printStackTrace();
         }
